@@ -1,7 +1,8 @@
 import os
 from flask import Flask, jsonify
 from operator import itemgetter
-  
+import copy 
+
 app = Flask(__name__)
 
 robo_co = {
@@ -78,7 +79,15 @@ def get_member(a):
     
 
 
-
+def get_relatives_id(member,types):
+    aux =[]
+    for id in member[types]:
+       
+        aux.append(get_member(id))
+        
+    member[type]=aux 
+    return member
+    
 
 
 
@@ -88,7 +97,25 @@ def hello():
     sorted_age=sorted(family,reverse=True, key=itemgetter('age'))
     return jsonify(sorted_age)
     
-
+@app.route('/<int:id>')
+def bye(id):
+    if id > 0:
+        print(family)
+        for i in family:
+            if id== i["id"]:
+                ele=copy.deepcopy(i)
+                print(ele)
+                x = ele["parents"]
+                aux =[]
+                for i in x:
+                    aux.append(i)
+                ele["parents"]=aux
+                
+                return jsonify({"status_code":200,"data":aux})
+        return jsonify({"error"})
+        
+            
+    
   
   
 app.run(host=os.getenv('IP', '0.0.0.0'),port=int(os.getenv('PORT', 8080)))
